@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Register Doctor — MediConnect{% endblock %}
+
+{% block content %}
+  <div class="grid grid--2" style="margin-top:18px;">
+    <div class="card">
+      <div class="pill">Admin action • Create doctor login</div>
+      <h2 style="margin-top:10px;">Register a doctor</h2>
+      <p class="muted">This creates a doctor account. Approve them from the admin dashboard before they go online.</p>
+      <form method="post" action="{{ url_for('admin.register_doctor_post') }}">
+        <label>Name
+          <input name="name" required placeholder="Doctor name" />
+        </label>
+        <label>Email
+          <input name="email" type="email" required placeholder="doctor@example.com" />
+        </label>
+        <label>Temporary password
+          <input name="password" type="password" required placeholder="Set a password" />
+        </label>
+        <label>Specialization
+          <input name="specialization" placeholder="e.g., Cardiologist" />
+        </label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" type="submit">Create</button>
+          <a class="btn btn--ghost" href="{{ url_for('admin.dashboard') }}">Back</a>
+        </div>
+      </form>
+    </div>
+    <div class="card" style="padding:14px;">
+      <img alt="Patient care" src="{{ url_for('static', filename='img/patient-care.svg') }}" style="width:100%; height:auto; border-radius:16px; border:1px solid var(--border);">
+      <div class="muted" style="margin-top:10px;">Tip: Use a strong temporary password.</div>
+    </div>
+  </div>
+{% endblock %}
+

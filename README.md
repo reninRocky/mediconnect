@@ -1,63 +1,109 @@
-# MediConnect — Online Hospital Platform
+# MediConnect — Modern Online Healthcare Platform
 
-## Quick start (Windows)
+MediConnect is a comprehensive, full-stack healthcare platform designed to bridge the gap between patients and doctors. It provides a seamless experience for booking appointments, attending video consultations, managing medical records, and interacting with an AI-powered health assistant.
 
-1) Install Python 3.11+ and reopen PowerShell.
+## 🚀 Key Features
 
-If `python` says “Python was not found…”, either:
+- **🏥 Advanced Appointment System**: Patients can easily book appointments with specialized doctors.
+- **🎥 Real-time Video Consultations**: High-quality, secure video calls using WebRTC and Socket.IO for remote diagnosis.
+- **🤖 AI-Powered Chatbot (MediBot)**: Integrated with Google Gemini AI to provide instant medical guidance and symptom information.
+- **💊 Digital Pharmacy**: A built-in medical store where users can browse and manage medications.
+- **👤 Multi-Role Dashboard**: Tailored experiences for Patients, Doctors, and Administrators.
+- **🛠 Admin Control Panel**: Manage doctor approvals, platform statistics, and system configurations.
+- **🔒 Secure Authentication**: Robust user authentication and role-based access control.
 
-- Use the Python launcher: run `py --version` and use `py` instead of `python`, or
-- Disable the Microsoft Store alias: **Settings → Apps → Advanced app settings → App execution aliases** → turn off `python.exe` and `python3.exe`.
+## 🛠 Tech Stack
 
-2) Create & activate a virtual environment:
+- **Backend**: Python, Flask
+- **Database**: SQLite (SQLAlchemy ORM)
+- **Frontend**: HTML5, CSS3, JavaScript (Jinja2 Templates)
+- **Real-time Communication**: Socket.IO, WebRTC
+- **AI Integration**: Google Gemini API
+- **Styling**: Vanilla CSS (Modern UI/UX)
 
+## ⚙️ Setup & Installation
+
+### 1. Prerequisites
+- Python 3.11 or higher installed on your system.
+
+### 2. Clone and Prepare Environment
 ```powershell
-cd "d:\medical project\mediconnect"
-py -m venv venv
-venv\Scripts\activate
+# Clone the repository (if not already done)
+git clone https://github.com/reninRocky/mediconnect.git
+cd mediconnect
+
+# Create and activate a virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
 ```
 
-3) Install dependencies:
-
+### 3. Install Dependencies
 ```powershell
-python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-4) Create `.env` (copy from `.env.example`) and set:
+### 4. Configuration
+Create a `.env` file in the root directory (refer to `.env.example`):
+```env
+SECRET_KEY=your_secret_key_here
+GEMINI_API_KEY=your_google_gemini_api_key
+```
 
-- `SECRET_KEY`
-- `GEMINI_API_KEY` (optional; chatbot works with a helpful message if missing)
-
-5) Run:
-
+### 5. Run the Application
 ```powershell
 python app.py
 ```
+Open `http://localhost:5000` in your browser.
 
-### One-command setup scripts (recommended)
+---
 
-```powershell
-cd "d:\medical project\mediconnect"
-.\setup-windows.ps1
-.\run.ps1
-```
+## 🔑 Default Admin Credentials
+For testing and initial setup:
+- **Email**: `admin@mediconnect.com`
+- **Password**: `admin123`
 
-Then open:
+---
 
-- Home: `http://localhost:5000`
-- Login: `http://localhost:5000/login`
+## 📤 How to Push to GitHub
 
-## Default admin
+If you want to push your local changes to your GitHub repository, follow these steps:
 
-- Email: `admin@mediconnect.com`
-- Password: `admin123`
+1. **Initialize Git** (if you haven't already):
+   ```bash
+   git init
+   ```
 
-## Notes
+2. **Add Files**:
+   Add all project files (except those ignored by `.gitignore`):
+   ```bash
+   git add .
+   ```
 
-- Doctors are created + approved by the admin panel.
-- Video calls use WebRTC with Socket.IO signaling (no TURN server configured).
-- On Windows/Python 3.13, Socket.IO runs in `threading` async mode for compatibility (instead of `eventlet`).
-- SQLite DB file `mediconnect.db` is created on first run.
+3. **Commit Changes**:
+   ```bash
+   git commit -m "Complete project features: AI Chatbot, Video Consultation, and Medical Store"
+   ```
 
-"# mediconnect" 
+4. **Add Remote Origin**:
+   ```bash
+   git remote add origin https://github.com/reninRocky/mediconnect.git
+   ```
+
+5. **Push to Main Branch**:
+   ```bash
+   git branch -M main
+   git push -u origin main
+   ```
+
+*Note: Use `git push origin main` for subsequent updates.*
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+*Developed with ❤️ by [Renin Rocky](https://github.com/reninRocky)*

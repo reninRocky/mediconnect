@@ -1,0 +1,299 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}{\f1 Consolas;}}
+\fs24
+\pard\b MediConnect \u8212? Project Documentation\b0\par
+\pard Version: March 2026\par
+\pard\par
+
+\pard\b 1) Project overview\b0\par
+\pard MediConnect is a Flask-based Online Hospital Platform with:\par
+\pard - Role-based access (User / Doctor / Admin)\par
+\pard - Doctor consultation request and WebRTC video call rooms\par
+\pard - AI Chatbot (Gemini) with chat history storage\par
+\pard - Medical store listing + cart page (UI)\par
+\pard - Real-time notifications using Socket.IO\par
+\pard\par
+
+\pard\b 2) Tech stack\b0\par
+\pard - Backend: Python + Flask\par
+\pard - Database: SQLite via Flask-SQLAlchemy\par
+\pard - Auth: Flask-Login\par
+\pard - Password hashing: Flask-Bcrypt\par
+\pard - Real-time: Flask-SocketIO (Windows-friendly threading async mode)\par
+\pard - Frontend: Jinja2 templates + static CSS/JS\par
+\pard - Video: WebRTC (browser) + Socket.IO signaling\par
+\pard - Chatbot: Google Gemini API (\f1 google-generativeai\f0)\par
+\pard\par
+
+\pard\b 3) Repository / folder structure\b0\par
+\pard\f1
+mediconnect/\par
+  app.py\par
+  config.py\par
+  extensions.py\par
+  requirements.txt\par
+  models/\par
+    user.py\par
+    doctor.py\par
+    appointment.py\par
+    chat.py\par
+    medical_store.py\par
+  routes/\par
+    __init__.py\par
+    auth.py\par
+    user.py\par
+    doctor.py\par
+    admin.py\par
+    chatbot.py\par
+    store.py\par
+    video.py\par
+  templates/\par
+    base.html\par
+    index.html\par
+    auth/\par
+    user/\par
+    doctor/\par
+    admin/\par
+    store/\par
+    chatbot/\par
+  static/\par
+    css/\par
+    js/\par
+\f0\par
+
+\pard\b 4) How the app boots (startup sequence)\b0\par
+\pard - \f1 app.py\f0 creates the Flask app and loads configuration from \f1 config.py\f0.\par
+\pard - Initializes extensions: SQLAlchemy, LoginManager, Socket.IO, Bcrypt.\par
+\pard - Registers all blueprints (auth, user, doctor, admin, chatbot, store, video).\par
+\pard - Creates all DB tables on first run (\f1 db.create_all()\f0).\par
+\pard - Seeds a default admin user if missing:\par
+\pard   Email: \f1 admin@mediconnect.com\f0 / Password: \f1 admin123\f0\par
+\pard\par
+
+\pard\b 5) Roles and permissions\b0\par
+\pard Access control is enforced using \f1 routes/role_required()\f0 (wraps Flask-Login).\par
+\pard - User: patient dashboard, consult, request call, join own rooms, store, chatbot\par
+\pard - Doctor: doctor dashboard, toggle availability, accept/decline, join assigned rooms, store, chatbot\par
+\pard - Admin: admin dashboard, register doctors, approve doctors, add medicines, join any room\par
+\pard\par
+
+\pard\b 6) Database schema (models)\b0\par
+\pard\f1
+users\par
+  id (PK)\par
+  name\par
+  email (unique)\par
+  password_hash\par
+  role = user|doctor|admin\par
+\par
+doctors\par
+  id (PK)\par
+  user_id (FK users.id, unique)\par
+  specialization\par
+  is_available (bool)\par
+  is_approved (bool)\par
+\par
+appointments\par
+  id (PK)\par
+  user_id (FK users.id)\par
+  doctor_id (FK doctors.id)\par
+  status = pending|active|done|declined\par
+  room_id (unique)\par
+  created_at\par
+\par
+chat_history\par
+  id (PK)\par
+  user_id (FK users.id)\par
+  message\par
+  response\par
+  timestamp\par
+\par
+medicines\par
+  id (PK)\par
+  name\par
+  description\par
+  price\par
+  stock\par
+  image_url\par
+\f0\par
+
+\pard\b 7) HTTP routes (high-level)\b0\par
+\pard\b1 Auth (routes/auth.py)\b0\par
+\pard - \f1 GET /login\f0, \f1 POST /login\f0\par
+\pard - \f1 GET /signup\f0, \f1 POST /signup\f0\par
+\pard - \f1 GET /logout\f0\par
+\pard\par
+\pard\b1 User (routes/user.py, prefix /user)\b0\par
+\pard - \f1 GET /user/dashboard\f0\par
+\pard - \f1 GET /user/consult\f0\par
+\pard - \f1 POST /user/request-call/<doctor_id>\f0\par
+\pard\par
+\pard\b1 Doctor (routes/doctor.py, prefix /doctor)\b0\par
+\pard - \f1 GET /doctor/dashboard\f0\par
+\pard - \f1 POST /doctor/toggle-availability\f0\par
+\pard - \f1 POST /doctor/accept/<appointment_id>\f0\par
+\pard - \f1 POST /doctor/decline/<appointment_id>\f0\par
+\pard\par
+\pard\b1 Admin (routes/admin.py, prefix /admin)\b0\par
+\pard - \f1 GET /admin/dashboard\f0\par
+\pard - \f1 GET|POST /admin/register-doctor\f0\par
+\pard - \f1 POST /admin/approve-doctor/<doctor_id>\f0\par
+\pard - \f1 POST /admin/medicine/add\f0\par
+\pard\par
+\pard\b1 Chatbot (routes/chatbot.py, prefix /chat)\b0\par
+\pard - \f1 GET /chat/\f0 (chat page)\par
+\pard - \f1 POST /chat/ask\f0 (JSON API)\par
+\pard\par
+\pard\b1 Store (routes/store.py, prefix /store)\b0\par
+\pard - \f1 GET /store/\f0\par
+\pard - \f1 GET /store/cart\f0\par
+\pard\par
+\pard\b1 Video (routes/video.py, prefix /video)\b0\par
+\pard - \f1 GET /video/room/<room_id>\f0 (role + ownership check)\par
+\pard\par
+
+\pard\b 8) Real-time events (Socket.IO)\b0\par
+\pard Two namespaces are used:\par
+\pard\b1 A) /notifications\b0\par
+\pard - \f1 join_user { user_id }\f0  \u8594? room \f1 user:<id>\f0\par
+\pard - \f1 join_doctor { doctor_id }\f0 \u8594? room \f1 doctor:<id>\f0\par
+\pard - Server emits:\par
+\pard   \f1 call_request\f0 \u8594? to doctor room when user requests consultation\par
+\pard   \f1 call_accepted\f0 \u8594? to user room when doctor accepts\par
+\pard   \f1 call_declined\f0 \u8594? to user room when doctor declines\par
+\pard\par
+\pard\b1 B) /video (WebRTC signaling)\b0\par
+\pard - \f1 join_room { room }\f0\par
+\pard - \f1 leave_room { room }\f0\par
+\pard - \f1 offer { room, offer }\f0\par
+\pard - \f1 answer { room, answer }\f0\par
+\pard - \f1 ice-candidate { room, candidate }\f0\par
+\pard - \f1 end_call { room }\f0\par
+\pard\par
+
+\pard\b 9) Flowcharts (ASCII)\b0\par
+\pard The diagrams below are designed to be copy/paste friendly.\par
+\pard\par
+
+\pard\b1 9.1 Login / Signup flow\b0\par
+\pard\f1
+  +---------+        +--------------------+\par
+  |  User   |        |  MediConnect (Web) |\par
+  +----+----+        +----------+---------+\par
+       |                        |\par
+       |  GET /login            |\par
+       +----------------------->|\par
+       |  POST /login (email,pw)|\par
+       +----------------------->|\par
+       |                        | validate user + role\par
+       |                        | set session (Flask-Login)\par
+       |  redirect to dashboard |\par
+       <-----------------------+\par
+\f0\par
+\pard\par
+
+\pard\b1 9.2 Consult \u8594? Appointment \u8594? Video Call flow (core)\b0\par
+\pard\f1
+  Patient                         Server                          Doctor\par
+  -------                         ------                          ------\par
+  /user/consult\par
+     |  POST /user/request-call/<doctor_id>\par
+     +--------------------------->|\par
+     |                            | create Appointment(status=pending, room_id)\par
+     |                            | emit call_request to room doctor:<id> (/notifications)\par
+     |                            +--------------------------------------------->|\par
+     |                            |                                             | Doctor dashboard reload / shows pending\par
+     |                            |  POST /doctor/accept/<appointment_id>\par
+     |                            |<---------------------------------------------+\par
+     |                            | set Appointment(status=active)\par
+     |                            | emit call_accepted to room user:<id> (/notifications)\par
+     |  auto redirect /video/room/<room_id>\par
+     +<---------------------------+\par
+     |                                                              redirect /video/room/<room_id>\par
+     |                                                              <-----------------------------+\par
+     |  WebRTC in browser: getUserMedia + negotiate via /video namespace\par
+     +----------------------- (Socket.IO offer/answer/ICE) ------------------------>\par
+\f0\par
+\pard\par
+
+\pard\b1 9.3 Video Room (WebRTC signaling)\b0\par
+\pard\f1
+  Browser A                     Socket.IO Server                     Browser B\par
+  ---------                     ---------------                     ---------\par
+  join_room(room_id)  ------->  join_room(room_id)\par
+  createOffer + setLocalDesc\par
+  offer(room_id, SDP) ------->  broadcast offer to room (excluding self) ----->\par
+                                                                  setRemoteDesc\par
+                                                                  createAnswer + setLocalDesc\par
+  answer(room_id, SDP) <-----  broadcast answer to room  <---------------------\par
+  ICE candidates (both sides) \par
+  ice-candidate  <---------->  broadcast to room  <-------------------------->\par
+\f0\par
+\pard\par
+
+\pard\b1 9.4 Chatbot flow (Gemini)\b0\par
+\pard\f1
+  User -> POST /chat/ask {message}\par
+           |\par
+           | if GEMINI_API_KEY missing: return friendly message\par
+           | else: call Gemini model, return reply\par
+           | store (user_id, message, response) in chat_history\par
+           v\par
+        JSON {reply}\par
+\f0\par
+\pard\par
+
+\pard\b1 9.5 Admin flow: register + approve doctor\b0\par
+\pard\f1
+  Admin -> GET /admin/register-doctor\par
+       -> POST /admin/register-doctor (name,email,password,specialization)\par
+            creates User(role=doctor) + Doctor(is_approved=false)\par
+       -> POST /admin/approve-doctor/<doctor_id>\par
+            sets Doctor.is_approved=true\par
+\f0\par
+\pard\par
+
+\pard\b 10) Configuration (.env)\b0\par
+\pard Required:\par
+\pard - \f1 SECRET_KEY\f0\par
+\pard Optional:\par
+\pard - \f1 GEMINI_API_KEY\f0 (enables chatbot)\par
+\pard - \f1 TURN_URL, TURN_USERNAME, TURN_PASSWORD\f0 (improves video call connectivity)\par
+\pard\par
+
+\pard\b 11) Local run (Windows) and verification\b0\par
+\pard Start:\par
+\pard\li360\f1 .\run.ps1\f0\par
+\pard\li0
+\pard Verify in browser:\par
+\pard - \f1 http://localhost:5000\f0 loads landing page\par
+\pard - Login at \f1 /login\f0\par
+\pard\par
+\pard Video call test:\par
+\pard - Use two browser sessions (Chrome normal + Incognito)\par
+\pard - Login as patient in one, doctor in the other\par
+\pard - Patient requests call; doctor accepts; both click Start\par
+\pard\par
+
+\pard\b 12) Production notes (important)\b0\par
+\pard - Use HTTPS in real deployments (camera/mic permissions).\par
+\pard - Ensure reverse proxy supports WebSocket upgrades for Socket.IO.\par
+\pard - Add TURN for best reliability across NAT/firewalls.\par
+\pard - Replace dev server with a production deployment approach.\par
+\pard\par
+
+\pard\b Appendix A: Default admin credentials\b0\par
+\pard - Email: \f1 admin@mediconnect.com\f0\par
+\pard - Password: \f1 admin123\f0\par
+\pard\par
+
+\pard\b Appendix B: Key pages\b0\par
+\pard - Landing: \f1 /\f0\par
+\pard - Login: \f1 /login\f0\par
+\pard - User dashboard: \f1 /user/dashboard\f0\par
+\pard - Consult: \f1 /user/consult\f0\par
+\pard - Doctor dashboard: \f1 /doctor/dashboard\f0\par
+\pard - Admin dashboard: \f1 /admin/dashboard\f0\par
+\pard - Chatbot: \f1 /chat/\f0\par
+\pard - Store: \f1 /store/\f0\par
+}

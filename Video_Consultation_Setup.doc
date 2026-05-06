@@ -1,0 +1,65 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}{\f1 Consolas;}}
+\fs24
+\pard\b MediConnect \u8212? Video Consultation Setup \u038? Testing\b0\par
+\pard\par
+\pard\b Purpose\b0\par
+\pard This document explains how patients connect to doctors online in MediConnect and how to run/test WebRTC video conferencing reliably.\par
+\pard\par
+\pard\b End-to-end workflow\b0\par
+\pard\b1 Patient\b0\par
+\pard - Login as \b User\b0.\par
+\pard - Go to \f1 /user/consult\f0.\par
+\pard - Click \f1 Request video call\f0 for an available doctor.\par
+\pard - Wait for acceptance; you will be redirected to \f1 /video/room/<room_id>\f0.\par
+\pard - Click \f1 Start\f0 and allow camera/microphone permissions.\par
+\pard\par
+\pard\b1 Doctor\b0\par
+\pard - Login as \b Doctor\b0.\par
+\pard - Go to \f1 /doctor/dashboard\f0 and toggle Online.\par
+\pard - Accept the incoming request.\par
+\pard - You will be redirected to \f1 /video/room/<room_id>\f0.\par
+\pard - Click \f1 Start\f0 and allow camera/microphone permissions.\par
+\pard\par
+\pard\b How it works internally (high level)\b0\par
+\pard - Appointment is created with status \f1 pending\f0 and a unique \f1 room_id\f0.\par
+\pard - Doctor receives \f1 call_request\f0 via Socket.IO namespace \f1 /notifications\f0.\par
+\pard - Doctor accept changes status to \f1 active\f0 and notifies the patient (\f1 call_accepted\f0).\par
+\pard - Both users join the room URL; WebRTC signaling happens over Socket.IO namespace \f1 /video\f0.\par
+\pard\par
+\pard\b Local run (Windows)\b0\par
+\pard Start server:\par
+\pard\li360\f1 .\run.ps1\f0\par
+\pard\li0
+\pard Open:\par
+\pard\li360\f1 http://127.0.0.1:5000\f0\par
+\pard\li0\par
+\pard\b Testing checklist\b0\par
+\pard\b1 A) Same-PC test (two sessions)\b0\par
+\pard - Open Chrome normal + Chrome Incognito.\par
+\pard - Login as patient in one, doctor in the other.\par
+\pard - Patient requests call \u8594? Doctor accepts.\par
+\pard - Both click \f1 Start\f0.\par
+\pard - Confirm audio/video both directions.\par
+\pard\par
+\pard\b1 B) Offer-collision test\b0\par
+\pard - In the room, press \f1 Start\f0 on both sides nearly simultaneously.\par
+\pard - Expected: still connects (perfect negotiation).\par
+\pard\par
+\pard\b1 C) Network test (realistic)\b0\par
+\pard - Test one device on mobile hotspot and another on Wi-Fi.\par
+\pard - If it fails, configure TURN (below).\par
+\pard\par
+\pard\b TURN configuration (recommended for strict networks)\b0\par
+\pard Add these to \f1 .env\f0:\par
+\pard\li360\f1 TURN_URL=turn:your-domain-or-ip:3478?transport=udp\par
+TURN_USERNAME=mediconnect\par
+TURN_PASSWORD=your-turn-password\f0\par
+\pard\li0
+\pard Restart the server after changing \f1 .env\f0.\par
+\pard\par
+\pard\b Production requirements\b0\par
+\pard - Use HTTPS for camera/mic permissions outside localhost.\par
+\pard - Ensure reverse proxy supports WebSocket upgrades (Socket.IO).\par
+\pard - Use a real TURN server for maximum reliability.\par
+}

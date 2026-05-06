@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Store — MediConnect{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/store.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="card" style="margin-top:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="pill">Medicines • Demo cart</div>
+        <h2 style="margin:0;">Medical Store</h2>
+        <div class="muted">Demo cart (sessionStorage). Checkout shows "Contact pharmacy".</div>
+      </div>
+      <a class="btn btn--ghost" href="{{ url_for('store.cart') }}">View cart</a>
+    </div>
+
+    {% if medicines %}
+      <div class="grid grid--3" style="margin-top:12px;">
+        {% for m in medicines %}
+          <div class="card store-item" style="padding:14px; display:flex; flex-direction:column;">
+            <!-- Medicine Image -->
+            <div class="medicine-image-container" style="width:100%; height:160px; border:3px solid var(--dark); background:var(--cream-100); display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:12px;">
+              {% if m.image_url %}
+                <img src="{{ m.image_url }}" alt="{{ m.name }}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'muted\\'>No Image</div>';">
+              {% else %}
+                <div class="muted" style="font-family:var(--mono); font-size:12px; text-transform:uppercase;">No Image</div>
+              {% endif %}
+            </div>
+            
+            <div class="pill" style="align-self:flex-start; margin-bottom:8px;">In stock: {{ m.stock }}</div>
+            <h3 style="margin:0 0 6px;">{{ m.name }}</h3>
+            <div class="muted" style="flex-grow:1;">{{ m.description or '—' }}</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:3px solid var(--dark);">
+              <div style="font-family:var(--mono); font-size:20px; font-weight:800;">₹{{ '%.2f'|format(m.price) }}</div>
+              <button class="btn btn--ghost"
+                      data-add-to-cart
+                      data-id="{{ m.id }}"
+                      data-name="{{ m.name }}"
+                      data-price="{{ m.price }}"
+                      data-image="{{ m.image_url or '' }}">
+                Add
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted" style="margin-top:12px;">
+        No medicines yet. Admin can add them in the admin dashboard.
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/store.js') }}"></script>
+{% endblock %}

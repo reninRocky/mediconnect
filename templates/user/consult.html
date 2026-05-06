@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Consult — MediConnect{% endblock %}
+
+{% block content %}
+  <div class="card" style="margin-top:18px;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0;">Available doctors</h2>
+        <div class="muted">Request a video consultation with an online doctor.</div>
+      </div>
+      <div class="pill">Real‑time requests • WebRTC rooms</div>
+    </div>
+    {% if doctors %}
+      <div class="grid grid--3" style="margin-top:12px;">
+        {% for d in doctors %}
+          <div class="card" style="padding:14px;">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <div style="width:56px; height:56px; border-radius:18px; border:1px solid var(--border); background:rgba(15,23,42,.02); overflow:hidden;">
+                <img alt="Doctor" src="{{ url_for('static', filename='img/doctor-1.svg') }}" style="width:100%; height:100%; object-fit:cover;">
+              </div>
+              <div>
+                <div class="pill">Doctor #{{ d.id }} • {{ d.specialization }}</div>
+                <h3 style="margin:10px 0 0;">{{ d.user.name }}</h3>
+                <div class="muted">Online: {{ 'Yes' if d.is_available else 'No' }}</div>
+              </div>
+            </div>
+            <form method="post" action="{{ url_for('user.request_call', doctor_id=d.id) }}" style="margin-top:12px;">
+              <button class="btn" type="submit">Request video call</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No doctors are online right now.</p>
+    {% endif %}
+  </div>
+{% endblock %}
+

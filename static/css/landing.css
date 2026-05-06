@@ -1,0 +1,327 @@
+/* Landing Page Styles - Retro/Brutalist Theme */
+
+.section {
+  margin-top: clamp(20px, 3vw, 32px);
+}
+
+/* Landing Hero - balanced 50/50 layout */
+.landing-hero {
+  padding: clamp(24px, 4vw, 40px) 0 clamp(16px, 3vw, 24px);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(20px, 3vw, 32px);
+  align-items: stretch;
+}
+
+@media (max-width: 1000px) {
+  .landing-hero { 
+    grid-template-columns: 1fr; 
+  }
+}
+
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: -120px -180px auto auto;
+  width: 420px;
+  height: 420px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(217, 121, 65, 0.1),
+    rgba(217, 121, 65, 0.1) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  opacity: 0.5;
+}
+
+.hero-card > * { position: relative; }
+
+/* Hero title with better line breaks */
+.hero-title {
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.25;
+  margin: 12px 0 16px;
+  letter-spacing: 0.02em;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.hero-subtitle {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: clamp(14px, 1.5vw, 16px);
+  max-width: 100%;
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+
+.cta-row {
+  display: flex;
+  gap: clamp(10px, 1.5vw, 16px);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+/* Right column card */
+.landing-hero > .card:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-hero > .card:last-child h2 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  margin-bottom: 16px;
+}
+
+/* How it works checklist */
+.checklist {
+  display: grid;
+  gap: clamp(10px, 1.5vw, 14px);
+  margin: 0 0 20px;
+  padding-left: 24px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: 1.5;
+}
+
+.checklist li {
+  padding-left: 8px;
+}
+
+/* Stats - flexbox for better distribution */
+.stats {
+  display: flex;
+  gap: clamp(10px, 1.5vw, 16px);
+  margin-top: auto;
+}
+
+.stats .stat {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(12px, 2vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stats .stat .value {
+  font-size: clamp(20px, 2.5vw, 32px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.stats .stat .muted {
+  font-size: clamp(10px, 1.2vw, 12px);
+  line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .stats {
+    flex-direction: column;
+  }
+}
+
+/* Feature row */
+.feature-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+
+@media (max-width: 900px) {
+  .feature-row { grid-template-columns: 1fr; }
+}
+
+.feature {
+  padding: clamp(16px, 2vw, 24px);
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.feature:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px var(--dark);
+}
+
+.feature .icon {
+  width: clamp(44px, 5vw, 52px);
+  height: clamp(44px, 5vw, 52px);
+  border: 4px solid var(--dark);
+  background: var(--mustard);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(12px, 1.5vw, 14px);
+  box-shadow: 3px 3px 0px var(--dark);
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.feature h3 {
+  margin: 0 0 8px;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+}
+
+.feature .muted {
+  flex-grow: 1;
+  font-size: clamp(13px, 1.4vw, 15px);
+}
+
+.feature .btn {
+  margin-top: 12px;
+  align-self: flex-start;
+}
+
+/* Split section */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2.5vw, 24px);
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; }
+}
+
+.mission {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mission h2 {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+/* Doctor grid */
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 20px);
+}
+
+@media (max-width: 1200px) {
+  .doctor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .doctor-grid { grid-template-columns: 1fr; }
+}
+
+.doctor-card {
+  padding: clamp(14px, 2vw, 18px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.15s ease;
+}
+
+.doctor-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px var(--dark);
+}
+
+.doctor-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar {
+  width: clamp(48px, 5vw, 56px);
+  height: clamp(48px, 5vw, 56px);
+  border: 4px solid var(--dark);
+  background: var(--cream-200);
+  overflow: hidden;
+  flex: 0 0 auto;
+  box-shadow: 3px 3px 0px var(--dark);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.doc-name {
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(13px, 1.5vw, 15px);
+  letter-spacing: 0.02em;
+}
+
+.doc-meta {
+  color: var(--muted);
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-family: var(--mono);
+}
+
+.rating {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-family: var(--mono);
+  margin-top: auto;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: var(--burnt);
+  border: 2px solid var(--dark);
+  box-shadow: 2px 2px 0px var(--dark);
+  flex-shrink: 0;
+}
+
+/* Banner */
+.banner {
+  padding: clamp(20px, 3vw, 28px);
+  background: var(--burnt);
+  border: 4px solid var(--dark);
+  color: var(--cream-50);
+  box-shadow: 6px 6px 0px var(--dark);
+  display: flex;
+  flex-direction: column;
+}
+
+.banner h2 {
+  color: var(--cream-50);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+.banner .muted {
+  color: rgba(255, 251, 245, 0.9);
+}
+
+.banner .cta-row {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+/* Additional retro utilities */
+.bg-sage { background: var(--sage); }
+.bg-mustard { background: var(--mustard); }
+.bg-coral { background: var(--coral); }
+.bg-lavender { background: var(--lavender); }
+.bg-dusty { background: var(--dusty); }
+.bg-cream { background: var(--cream-100); }

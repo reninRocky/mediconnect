@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}MediConnect — Online Hospital{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <section class="landing-hero">
+    <div class="card hero-card">
+      <div class="pill">Discover our mission • Patient‑centered care • 24/7 access</div>
+      <h1 class="hero-title">Discover Our Mission and Values in Patient‑Centered Healthcare</h1>
+      <p class="hero-subtitle">
+        MediConnect brings consultations, an AI health assistant, and a medical store into one clean platform.
+        For urgent symptoms, always consult a real doctor.
+      </p>
+      <div class="cta-row">
+        {% if current_user.is_authenticated %}
+          {% if current_user.role == 'admin' %}
+            <a class="btn" href="{{ url_for('admin.dashboard') }}">Go to Admin</a>
+          {% elif current_user.role == 'doctor' %}
+            <a class="btn" href="{{ url_for('doctor.dashboard') }}">Doctor Dashboard</a>
+          {% else %}
+            <a class="btn" href="{{ url_for('user.dashboard') }}">User Dashboard</a>
+          {% endif %}
+          <a class="btn btn--ghost" href="{{ url_for('chatbot.chat_page') }}">Try MediBot</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('auth.login') }}">Login</a>
+          <a class="btn btn--ghost" href="{{ url_for('auth.signup') }}">Get Started</a>
+        {% endif %}
+        <span class="muted">Tip: Admin registers & approves doctors.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">How it works</h2>
+      <ol class="checklist">
+        <li>Signup (users) or login (users/doctors/admin)</li>
+        <li>Find an available doctor and request a consultation</li>
+        <li>Doctor accepts → join the WebRTC video room</li>
+      </ol>
+      <hr class="hr" />
+      <div class="stats">
+        <div class="card stat">
+          <div class="value">100%</div>
+          <div class="muted">Patient focus</div>
+        </div>
+        <div class="card stat">
+          <div class="value">24/7</div>
+          <div class="muted">Access to services</div>
+        </div>
+        <div class="card stat">
+          <div class="value">Fast</div>
+          <div class="muted">Real‑time notifications</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="feature-row">
+      <div class="card feature">
+        <div class="icon">AI</div>
+        <h3>AI Chatbot</h3>
+        <div class="muted">General medical info, symptom guidance, and health tips.</div>
+        <div style="margin-top:12px;">
+          <a class="btn btn--ghost" href="{{ url_for('chatbot.chat_page') }}">Open Chat</a>
+        </div>
+      </div>
+      <div class="card feature">
+        <div class="icon">DR</div>
+        <h3>Doctor Consult</h3>
+        <div class="muted">Request a consultation with available doctors.</div>
+        <div style="margin-top:12px;">
+          <a class="btn btn--ghost" href="{{ url_for('user.consult') }}">Browse Doctors</a>
+        </div>
+      </div>
+      <div class="card feature">
+        <div class="icon">RX</div>
+        <h3>Medical Store</h3>
+        <div class="muted">Browse medicines and manage a simple cart.</div>
+        <div style="margin-top:12px;">
+          <a class="btn btn--ghost" href="{{ url_for('store.store') }}">Shop Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split">
+    <div class="card mission">
+      <h2 style="margin:0;">Let’s know about our main goal</h2>
+      <div class="muted">
+        Build a reliable, simple experience for patients and doctors: clear flows, fast notifications, and secure access.
+      </div>
+      <ul class="checklist">
+        <li>Role‑based dashboards (User / Doctor / Admin)</li>
+        <li>Real‑time call requests via Socket.IO</li>
+        <li>WebRTC video rooms with STUN support</li>
+        <li>Chat history stored in SQLite</li>
+      </ul>
+    </div>
+    <div class="card banner">
+      <h2 style="margin:0;">Bring your customer service to the next level</h2>
+      <div class="muted" style="margin-top:8px;">
+        A clean landing experience + modern dashboards — without breaking backend routes.
+      </div>
+      <div style="margin-top:14px;" class="cta-row">
+        <a class="btn" href="{{ url_for('auth.login') }}">Login</a>
+        <a class="btn btn--ghost" href="{{ url_for('auth.signup') }}">Create account</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+        <div>
+          <h2 style="margin:0;">Meet our expert doctors</h2>
+          <div class="muted">Sample profiles (demo images shipped locally).</div>
+        </div>
+        <a class="btn btn--ghost" href="{{ url_for('user.consult') }}">Consult now</a>
+      </div>
+      <div class="doctor-grid" style="margin-top:14px;">
+        <div class="card doctor-card">
+          <div class="doctor-head">
+            <div class="avatar"><img alt="Doctor" src="{{ url_for('static', filename='img/doctor-1.svg') }}"></div>
+            <div>
+              <div class="doc-name">Dr. Aarav Mehta</div>
+              <div class="doc-meta">Cardiology • 8+ years</div>
+            </div>
+          </div>
+          <div class="rating"><span class="dot"></span> 4.9 • Patient favorite</div>
+        </div>
+        <div class="card doctor-card">
+          <div class="doctor-head">
+            <div class="avatar"><img alt="Doctor" src="{{ url_for('static', filename='img/doctor-2.svg') }}"></div>
+            <div>
+              <div class="doc-name">Dr. Isha Kulkarni</div>
+              <div class="doc-meta">Dermatology • 6+ years</div>
+            </div>
+          </div>
+          <div class="rating"><span class="dot"></span> 4.8 • Fast consults</div>
+        </div>
+        <div class="card doctor-card">
+          <div class="doctor-head">
+            <div class="avatar"><img alt="Doctor" src="{{ url_for('static', filename='img/doctor-3.svg') }}"></div>
+            <div>
+              <div class="doc-name">Dr. Kabir Sharma</div>
+              <div class="doc-meta">General Medicine • 10+ years</div>
+            </div>
+          </div>
+          <div class="rating"><span class="dot"></span> 4.9 • Trusted guidance</div>
+        </div>
+        <div class="card doctor-card">
+          <div class="doctor-head">
+            <div class="avatar"><img alt="Doctor" src="{{ url_for('static', filename='img/doctor-4.svg') }}"></div>
+            <div>
+              <div class="doc-name">Dr. Neha Patil</div>
+              <div class="doc-meta">Pediatrics • 7+ years</div>
+            </div>
+          </div>
+          <div class="rating"><span class="dot"></span> 4.7 • Great with kids</div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Doctor Dashboard — MediConnect{% endblock %}
+{% block content %}
+  <div class="grid grid--2" style="margin-top:18px;">
+    <div class="card" style="display:grid; gap:12px;">
+      <div class="pill">Doctor dashboard • Real‑time requests</div>
+      <h2 style="margin:0;">Welcome, Dr. {{ doctor.user.name }}</h2>
+      <div class="muted">Specialization: <strong>{{ doctor.specialization }}</strong></div>
+      <div class="muted">Account: <strong>{{ 'Approved' if doctor.is_approved else 'Pending approval' }}</strong></div>
+      <div class="muted">Status: <strong>{{ 'Online' if doctor.is_available else 'Offline' }}</strong></div>
+      <form method="post" action="{{ url_for('doctor.toggle_availability') }}">
+        <button class="btn" type="submit" {% if not doctor.is_approved %}disabled{% endif %}>
+          Toggle Online/Offline
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Incoming requests</h2>
+      {% if pending %}
+        <div style="display:grid; gap:10px;">
+          {% for a in pending %}
+            <div class="subtle" style="padding:12px;">
+              <div class="muted">Appointment #{{ a.id }} • Room {{ a.room_id[:10] }}…</div>
+              <div>Patient user id: <span class="kbd">{{ a.user_id }}</span></div>
+              <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+                <form method="post" action="{{ url_for('doctor.accept', appointment_id=a.id) }}">
+                  <button class="btn" type="submit">Accept</button>
+                </form>
+                <form method="post" action="{{ url_for('doctor.decline', appointment_id=a.id) }}">
+                  <button class="btn btn--ghost" type="submit">Decline</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">No pending requests.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Recent appointments</h2>
+    {% if today %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Room</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in today %}
+            <tr>
+              <td>#{{ a.id }}</td>
+              <td>{{ a.user_id }}</td>
+              <td>{{ a.status }}</td>
+              <td>
+                {% if a.status == 'active' %}
+                  <a class="btn btn--ghost" href="{{ url_for('video.room', room_id=a.room_id) }}">Open room</a>
+                {% else %}
+                  <span class="muted">{{ a.room_id[:10] }}…</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">No appointments yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.__DOCTOR_ID__ = {{ doctor.id }};
+  </script>
+  <script src="{{ url_for('static', filename='js/doctor-panel.js') }}"></script>
+{% endblock %}
+

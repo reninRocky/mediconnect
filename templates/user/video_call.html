@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Video Call — MediConnect{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/video.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="card" style="margin-top:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="pill">WebRTC • Secure room</div>
+        <h2 style="margin:0;">Video Call</h2>
+        <div class="muted">Room: <span class="kbd">{{ room_id }}</span></div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btnStart" class="btn">Start Call</button>
+        <button id="btnHangup" class="btn btn--danger">Hang up</button>
+      </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="card" style="margin-top:16px; padding:16px; background:var(--cream-100); border:3px solid var(--dark);">
+      <h4 style="margin:0 0 8px; font-family:var(--mono); font-size:13px; text-transform:uppercase;">How to use:</h4>
+      <ol style="margin:0; padding-left:20px; font-size:14px; color:var(--muted);">
+        <li>Both doctor and patient should open this page</li>
+        <li>Either person can click "Start Call" first (or both can click it)</li>
+        <li>Allow camera and microphone access when prompted</li>
+        <li>The connection will establish automatically</li>
+        <li>Click "Hang up" to end the call</li>
+      </ol>
+    </div>
+    
+    <div class="video-grid" style="margin-top:14px;">
+      <div class="video-tile">
+        <div class="muted" style="font-size:12px; margin-bottom:6px; font-family:var(--mono); text-transform:uppercase;">You</div>
+        <video id="localVideo" autoplay playsinline muted></video>
+      </div>
+      <div class="video-tile">
+        <div class="muted" style="font-size:12px; margin-bottom:6px; font-family:var(--mono); text-transform:uppercase;">Remote</div>
+        <video id="remoteVideo" autoplay playsinline></video>
+      </div>
+    </div>
+    <div id="callStatus" class="muted" style="margin-top:14px; font-family:var(--mono); padding:10px; border:2px solid var(--dark); background:var(--cream-50);">Ready. Waiting to start...</div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.__ROOM_ID__ = "{{ room_id }}";
+    window.__POLITE__ = {{ "true" if is_polite else "false" }};
+    window.__ICE_SERVERS__ = {{ ice_servers_json|safe }};
+  </script>
+  <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+{% endblock %}

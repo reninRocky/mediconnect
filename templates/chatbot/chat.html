@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Chatbot — MediConnect{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="card" style="margin-top:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="pill">AI assistant • General guidance</div>
+        <h2 style="margin:0;">MediBot</h2>
+        <div class="muted">General guidance only — consult a doctor for urgent issues.</div>
+      </div>
+      <div class="pill">Model: gemini-2.5-flash</div>
+    </div>
+
+    <div id="chatBox" class="chatbox" style="margin-top:14px;"></div>
+
+    <form id="chatForm" class="chatform" style="margin-top:12px;">
+      <input id="chatInput" placeholder="Type your message…" autocomplete="off" />
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}
+

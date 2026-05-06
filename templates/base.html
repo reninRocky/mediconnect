@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}MediConnect{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+    {% block styles %}{% endblock %}
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="{{ url_for('index') }}">
+          MediConnect
+          <small>Online Hospital Platform</small>
+        </a>
+        <nav class="nav">
+          {% if current_user.is_authenticated %}
+            <span class="pill" style="gap:10px;">
+              <img alt="User" src="{{ url_for('static', filename='img/user-icon.svg') }}" style="width:18px; height:18px; border-radius:999px;">
+              {{ current_user.name }} • {{ current_user.role|capitalize }}
+            </span>
+            {% if current_user.role == 'user' %}
+              <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+              <a href="{{ url_for('user.consult') }}">Consult</a>
+            {% elif current_user.role == 'doctor' %}
+              <a href="{{ url_for('doctor.dashboard') }}">Doctor Panel</a>
+            {% elif current_user.role == 'admin' %}
+              <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+            {% endif %}
+            <a href="{{ url_for('chatbot.chat_page') }}">Chatbot</a>
+            <a href="{{ url_for('store.store') }}">Store</a>
+            <a class="btn btn--ghost" href="{{ url_for('auth.logout') }}">Logout</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a class="btn" href="{{ url_for('auth.signup') }}">Signup</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          <div class="flash-wrap">
+            {% for category, message in messages %}
+              <div class="flash flash--{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div>© {{ 2026 }} MediConnect</div>
+        <div class="muted">Demo platform — not medical advice.</div>
+      </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

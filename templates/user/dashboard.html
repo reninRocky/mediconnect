@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — MediConnect{% endblock %}
+
+{% block content %}
+  <div class="grid grid--2" style="margin-top:18px;">
+    <div class="card" style="display:grid; gap:12px;">
+      <div class="pill">Welcome back • Patient dashboard</div>
+      <h2 style="margin:0;">Hi, {{ current_user.name }}.</h2>
+      <div class="muted">
+        Quick actions for consultations, MediBot, and the store. You’ll get real‑time updates when a doctor accepts a request.
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a class="btn" href="{{ url_for('user.consult') }}">Consult a doctor</a>
+        <a class="btn btn--ghost" href="{{ url_for('chatbot.chat_page') }}">Ask MediBot</a>
+        <a class="btn btn--ghost" href="{{ url_for('store.store') }}">Medical store</a>
+      </div>
+    </div>
+    <div class="card" style="padding:14px;">
+      <img alt="Trust" src="{{ url_for('static', filename='img/trust-handshake.svg') }}" style="width:100%; height:auto; border-radius:16px; border:1px solid var(--border);">
+      <div class="muted" style="margin-top:10px;">Trusted care • Secure access • Clear guidance</div>
+    </div>
+  </div>
+
+  <div class="grid grid--2" style="margin-top:16px;">
+    <div class="card">
+      <h2 style="margin-top:0;">Appointments</h2>
+      {% if appointments %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Room</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in appointments %}
+              <tr>
+                <td>#{{ a.id }}</td>
+                <td>{{ a.status }}</td>
+                <td>
+                  {% if a.status == 'active' %}
+                    <a class="btn btn--ghost" href="{{ url_for('video.room', room_id=a.room_id) }}">Join call</a>
+                  {% else %}
+                    <span class="muted">{{ a.room_id[:10] }}…</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="muted">No appointments yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Recent chats</h2>
+      {% if chats %}
+        <div style="display:grid; gap:10px;">
+          {% for c in chats %}
+            <div class="subtle" style="padding:12px;">
+              <div class="muted" style="font-size:12px;">{{ c.timestamp }}</div>
+              <div><strong>You:</strong> {{ c.message }}</div>
+              <div class="muted"><strong>MediBot:</strong> {{ c.response }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">No chat history yet.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const notif = io("/notifications");
+    notif.on("connect", () => {
+      notif.emit("join_user", { user_id: {{ current_user.id }} });
+    });
+    notif.on("call_accepted", (data) => {
+      const room = data.room_id;
+      window.location.href = `/video/room/${room}`;
+    });
+    notif.on("call_declined", () => {
+      // fallback: reload to show status changes
+      window.location.reload();
+    });
+  </script>
+{% endblock %}
+

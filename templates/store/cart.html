@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cart — MediConnect{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/store.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="card" style="margin-top:18px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <div class="pill">Cart • Local session</div>
+        <h2 style="margin:0;">Cart</h2>
+        <div class="muted">Stored locally in your browser for this demo.</div>
+      </div>
+      <a class="btn btn--ghost" href="{{ url_for('store.store') }}">Continue shopping</a>
+    </div>
+
+    <div id="cartWrap" style="margin-top:14px;"></div>
+
+    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+      <button id="btnClearCart" class="btn btn--ghost" type="button">Clear</button>
+      <button id="btnCheckout" class="btn" type="button">Checkout</button>
+    </div>
+    <div id="checkoutMsg" class="muted" style="margin-top:10px;"></div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/store.js') }}"></script>
+{% endblock %}
+

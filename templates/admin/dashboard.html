@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — MediConnect{% endblock %}
+
+{% block content %}
+  <div class="grid grid--2" style="margin-top:18px;">
+    <div class="card" style="display:grid; gap:12px;">
+      <div class="pill">Admin dashboard • Manage doctors & store</div>
+      <h2 style="margin:0;">System overview</h2>
+      <div class="muted">Register doctors, approve access, and manage medicines.</div>
+      <div class="grid grid--3">
+        <div class="card stat">
+          <div class="value">{{ stats.users }}</div>
+          <div class="muted">Users</div>
+        </div>
+        <div class="card stat">
+          <div class="value">{{ stats.doctors }}</div>
+          <div class="muted">Doctors</div>
+        </div>
+        <div class="card stat">
+          <div class="value">{{ stats.appointments }}</div>
+          <div class="muted">Appointments</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:14px;">
+      <img alt="Patient care" src="{{ url_for('static', filename='img/patient-care.svg') }}" style="width:100%; height:auto; border:3px solid var(--dark);">
+      <div class="muted" style="margin-top:10px;">Operations • Approvals • Inventory</div>
+    </div>
+  </div>
+
+  <div class="grid grid--2" style="margin-top:16px;">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <h2 style="margin:0;">Doctors</h2>
+        <a class="btn btn--ghost" href="{{ url_for('admin.register_doctor') }}">Register doctor</a>
+      </div>
+      {% if doctors %}
+        <table class="table" style="margin-top:12px;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Specialization</th>
+              <th>Approved</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in doctors %}
+              <tr>
+                <td>#{{ d.id }}</td>
+                <td>{{ d.user.name }}</td>
+                <td>{{ d.specialization }}</td>
+                <td>{{ 'Yes' if d.is_approved else 'No' }}</td>
+                <td>
+                  {% if not d.is_approved %}
+                    <form method="post" action="{{ url_for('admin.approve_doctor', doctor_id=d.id) }}">
+                      <button class="btn" type="submit">Approve</button>
+                    </form>
+                  {% else %}
+                    <span class="muted">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="muted">No doctors yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Add medicine</h2>
+      <form method="post" action="{{ url_for('admin.add_medicine') }}">
+        <label>Name
+          <input name="name" placeholder="e.g., Paracetamol 500mg" required />
+        </label>
+        <label>Description
+          <textarea name="description" placeholder="Optional description"></textarea>
+        </label>
+        <div class="grid grid--2">
+          <label>Price
+            <input name="price" type="number" step="0.01" value="0" />
+          </label>
+          <label>Stock
+            <input name="stock" type="number" step="1" value="0" />
+          </label>
+        </div>
+        <label>Image URL
+          <input name="image_url" placeholder="Optional image URL" />
+        </label>
+        <button class="btn" type="submit">Add</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Medicines Inventory Section -->
+  <div class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Medicines Inventory</h2>
+    {% if medicines %}
+      <div class="grid grid--4" style="margin-top:12px;">
+        {% for m in medicines %}
+          <div class="card" style="padding:12px;">
+            <div style="width:100%; height:100px; border:3px solid var(--dark); background:var(--cream-100); display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:10px;">
+              {% if m.image_url %}
+                <img src="{{ m.image_url }}" alt="{{ m.name }}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'muted\\' style=\\'font-size:10px;\\'>No Image</div>';">
+              {% else %}
+                <div class="muted" style="font-family:var(--mono); font-size:10px; text-transform:uppercase;">No Image</div>
+              {% endif %}
+            </div>
+            <div style="font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; color:var(--burnt);">Stock: {{ m.stock }}</div>
+            <h4 style="margin:6px 0; font-size:14px;">{{ m.name }}</h4>
+            <div style="font-family:var(--mono); font-weight:800;">₹{{ '%.2f'|format(m.price) }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No medicines added yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2 style="margin-top:0;">Recent appointments</h2>
+    {% if appointments %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Doctor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in appointments %}
+            <tr>
+              <td>#{{ a.id }}</td>
+              <td>{{ a.user_id }}</td>
+              <td>{{ a.doctor_id }}</td>
+              <td>{{ a.status }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">No appointments yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}
